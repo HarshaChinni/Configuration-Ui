@@ -1,0 +1,253 @@
+//controllers for manage Training functionalities
+
+angular.module('hansumApp.Settings')
+
+    .factory('TransferObject', function ($rootScope) {
+
+        var send = {};
+        send.conName;
+        send.conValue;
+        send.conEdit;
+        send.update = function (p, q, r) {
+            send.conName = p;
+            send.conValue = q;
+            send.conEdit = r;
+            send.broadcastFn();
+            console.log(send.conName);
+
+            console.log(send.conValue);
+        };
+
+        // console.log(send.conValue);
+
+        send.broadcastFn = function () {
+            $rootScope.$broadcast('broadcastIt');
+        };
+
+
+        return send;
+
+    })
+    /*
+     * controller for training table ,feedback table associated with training table
+     */
+    .controller('ConfiguratonController', function ($scope, $rootScope, $http, $modal, appURL, ModalService, TransferObject, growl) {
+
+        /* variable used for loader icon till the request is processed*/
+        $scope.dataLoaded = true;
+
+        /*variable used for customizing datatable options. this variable is
+         *  binded to directive using 'options' attribute in html of table*/
+
+        $scope.options = {
+            aoColumns: [{ "bSortable": true }, { "bSortable": false },
+            { "bSortable": false }],
+            bPaginate: true,
+            bInfo: false,
+            bLengthChange: false,
+            iDisplayLength: 10, // maximum no of rows to be displayed in a page
+            aaData: [],
+            bjQueryUI: true,
+            language: {
+                search: "",
+                searchPlaceholder: "Search By Any Field",
+                zeroRecords: "No matching Parameter found",
+            },
+            sDom: '<"form-group search"<"input-group"f<"input-group-addon"<"glyphicon glyphicon-search">>>><"dataTableContainer"t><"dataTablePaginateContainer"p>'
+        };
+
+        $scope.options.aaData = [];
+        console.log("here");
+
+        $scope.test = function () {
+
+            console.log("inside function");
+
+            // $scope.printObj = [
+            //     {
+            //         "name": "constant1",
+            //         "value": 20,
+            //         "action": "edit"
+            //     },
+
+            //     {
+            //         "name": "constant2",
+            //         "value": 30,
+            //         "action": "delete"
+            //     },
+
+            //     {
+            //         "name": "constant3",
+            //         "value": 40,
+            //         "action": "edit"
+            //     }
+            // ];
+            $scope.configId = null;
+            $scope.constant;
+
+            $scope.value;
+            $scope.editFlag;
+            $scope.$on('broadcastIt', function () {
+
+                $scope.configId = null;
+                $scope.constant = TransferObject.conName;
+
+                console.log(TransferObject.conName);
+                $scope.value = TransferObject.conValue;
+                $scope.editFlag = TransferObject.conEdit;
+
+                $scope.endValues = {
+
+                    "configId": $scope.configId,
+
+                    "constant": $scope.constant,
+
+                    "value": $scope.value,
+
+                    "editFlag": $scope.editFlag,
+
+                };
+
+                // http://172.24.125.67:8086/dp-rest/resources/configuration
+
+                $http.post(appURL + '/resources/configuration', $scope.endValues)
+                    .then(function (response) {
+                        console.log("in POST");
+
+                    }, function () {
+                        console.log("failure time");
+                    });
+
+            });
+
+            //console.log(TransferObject.conName);
+
+            // console.log($scope.endValues);
+            // $scope.printObj.push([$scope.configId, $scope.constant, $scope.value, $scope.editFlag]);
+
+
+
+
+            // http://172.24.125.67:8086/dp-rest/resources/configuration
+
+            $http.get(appURL + '/resources/configuration', {
+            }).then(function (response) {
+                $scope.fullList = response.data;
+                console.log("I'm in GET ALl !!");
+                console.log($scope.fullList);
+
+                angular.forEach($scope.fullList, function (object) {
+
+                    $scope.options.aaData.push(["<a href=''>" + object.constant + "</a>", object.value, "<a href='' ng-click= 'delete(object.constant)' tooltip-placement='bottom' tooltip='Delete' ng-if='" + object.editFlag + "'><span class='glyphicon glyphicon-trash'></span></a>"]);
+                });
+
+            }, function () {
+                console.log("Failed Fetching Project List");
+            });
+
+            //http://172.24.125.67:8086/dp-rest/resources/configuration/constant/?constant={constant}
+            // http://172.24.125.67:8086/dp-rest/resources/configuration/id/?id={configId}
+
+
+            //  console.log($scope.endValues);
+
+
+        };
+        // console.log($rootScope.name);
+        // console.log( $rootScope.value);
+        $scope.test();
+
+        /* function which is used for modal service of create Configuration display*/
+        $rootScope.showCreateConfiguration = function () {
+
+            console.log("In the create config modal");
+
+            ModalService.showModal({
+                templateUrl: 'app/Settings/createConfiguration.html',
+                controller: "createConfigurationController"
+            }).then(
+                function (modal) {
+                    modal.element.modal();
+                    modal.close.then(function (result) {
+                        $('.modal-backdrop').remove();
+                    });
+                    modal.element
+                        .siblings('.modal-backdrop:not(.fade)')
+                        .remove();
+                    console.log("at the end of modal block");
+                });
+
+
+        };
+
+        //console.log($scope.printObj);
+
+        // angular.forEach($scope.printObj, function (object) {
+
+        //     $scope.options.aaData.push([object.name, object.value, object.action]);
+
+        // });
+        // console.log(a);
+
+        $scope.delete = function () {
+
+            ModalService.showModal({
+                templateUrl: 'app/Settings/deleteConfiguration.html',
+                controller: "createConfigurationController"
+            }).then(
+                function (modal) {
+                    modal.element.modal();
+                    modal.close.then(function (result) {
+                        $('.modal-backdrop').remove();
+                    });
+                    modal.element
+                        .siblings('.modal-backdrop:not(.fade)')
+                        .remove();
+                    console.log("at the end of modal block");
+                     $rootScope.deleteFn(name);
+
+                });
+
+                
+        };
+
+    })
+
+    .controller('createConfigurationController', function ($scope, $rootScope, $modal, ModalService, TransferObject) {
+
+        $rootScope.createConfiguration = function (name, value, edit) {
+            // if (edit) {
+            //      "Editable";
+            // }
+            // else {
+            //     var c = "Not Editable";
+            // }
+
+            var a = name;
+            var b = value;
+            var c = edit;
+
+            console.log(a);
+            console.log(b);
+            console.log(c);
+
+
+            TransferObject.update(a, b, c);
+
+
+            console.log("inside create config func");
+        };
+
+        $rootScope.deleteFn = function (name){
+             $http.delete(appURL + '/resources/configuration/constant/?constant=' + name, {
+            }).then(function (response) {
+                growl.success("The Selected item is deleted successfully" + name);
+            },
+                function () {
+                    growl.error("The deletion of the item is failed")
+
+                });
+        };
+
+
+    });

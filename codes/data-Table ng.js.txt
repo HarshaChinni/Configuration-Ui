@@ -1,0 +1,451 @@
+angular.module('hansumApp')
+
+.directive('myTable', function ($compile, $timeout,$rootScope) {
+	console.log("in directive")
+	return {
+		restrict: 'E, A, C',
+		replace: true,
+		link: function (scope,element, attrs, controller,rootScope) {
+			$.fx.off = true;
+			if(!window.newFeedbackCount)
+				window.newFeedbackCount = 0;
+			var dataTable = element.dataTable(scope.options);
+			var tableObj = $(element).DataTable();
+			var oTable = $('#feedback-table').dataTable();
+			//scope.options = scope.options;
+			scope.$watch('options.aaData', handleModelUpdates, true);
+
+			/*--compiling on page change event and search event of datatable
+			 * */
+			$(element).on('page.dt', function () {
+				$timeout(function () { $compile(element.contents())(scope); }, 10);
+			});
+			$(element).on('search.dt', function () {
+				$timeout(function () { $compile(element.contents())(scope); }, 10);
+			});
+
+
+			/* handling ng-click in directive to avoid multiple
+			 *  times modal window triggering*/
+
+			/* click handle for edit user display in user manangement module*/
+			$('.dataTableContainer').on('click','.edit-user',function () {
+			
+				if(scope.tableData)
+					scope.tableData.showEditUser($(this).attr('attr'));
+			});
+
+
+			/* click handle for edit configuration display in Configuration module*/
+			$('.dataTableContainer').on('click', '.edit-config', function () {
+
+			//	alert("inside data ng table call edit");
+				//alert($(this).attr('attr'));
+				if (scope.tableData)
+					scope.tableData.editConfig($(this).attr('attr'));
+			});
+
+			/* click handle for delete configuration display in Configuration module*/
+			$('.dataTableContainer').on('click', '.delete-config', function () {
+
+			//	alert("inside data ng table call delete");
+			//	alert($(this).attr('attr'));
+				if (scope.tableData)
+					scope.tableData.deleteConfig($(this).attr('attr'));
+			});
+			/* click handle for edit service line display in service line management module*/
+			$('.dataTableContainer').on('click', '.edit-serviceLine', function () {
+
+				if (scope.tableData)
+					scope.tableData.showEditServiceLine($(this).attr('attr'));
+			});
+			/* click handle for edit practice display in practice manangement module*/
+			$('.dataTableContainer').on('click','.edit-practice',function () {
+			
+				if(scope.tableData)
+					scope.tableData.showEditPractice($(this).attr('attr'));
+			});
+			
+			/* click handle for edit service line display in service line management module*/
+			$('.dataTableContainer').on('click','.edit-department',function () {
+			
+				if(scope.tableData)
+					scope.tableData.showEditDepartment($(this).attr('attr'));
+			});
+			
+			/* click handle for edit Project display in Project management module*/
+			
+			$('.dataTableContainer').on('click','.edit-project',function () {
+			
+				if(scope.tableData)
+					scope.tableData.editProject($(this).attr('attr'));
+			});
+			/* click handle for edit milestone display in Milestones management module*/
+			$('.dataTableContainer').on('click','.edit-sows',function () {
+			
+				if(scope.tableData)
+					scope.tableData.editSows($(this).attr('attr'));
+			});
+
+			/* click handle for edit milestone display in Milestones management module*/
+			$('.dataTableContainer').on('click','.edit-milestone',function () {
+			
+				if(scope.tableData)
+					scope.tableData.editMilestone($(this).attr('attr'));
+			});
+			/* click handle for edit wbdPlan display in Mapping wbdPlannnings*/
+			$('.dataTableContainer').on('click','.edit-wbdPlan',function () {
+			
+				if(scope.tableData)
+					scope.tableData.editWBDPlan($(this).attr('attr'));
+			});
+			/* click handle for edit wbdRole display in Mapping wbdRoles*/
+			$('.dataTableContainer').on('click','.edit-wbdRole',function () {
+				if(scope.tableData){
+					scope.tableData.editWBDRole($(this).attr('attr'));
+				}
+			});
+			/* click handle for edit MilestoneResource display in Mapping wbdRoles*/
+			$('.dataTableContainer').on('click','.edit-milestoneResource',function () {
+				if(scope.tableData){
+					scope.tableData.editMilestoneResource($(this).attr('attr'));
+				}
+			});
+			/* click handle for edit wbdRole display in Mapping wbdRoles*/
+			$('.dataTableContainer').on('click','.edit-wbdPerformed',function () {
+				if(scope.tableData){
+					scope.tableData.editWBDPerformed($(this).attr('attr'));
+				}
+			});
+			
+			/* click handle for edit MilestoneResource display in Mapping wbdRoles*/
+			$('.dataTableContainer').on('click','.delete-milestoneResource',function () {
+				if(scope.tableData){
+					scope.tableData.deleteMilestoneResource($(this).attr('attr'));
+				}
+			});
+			/* click handle for delete user display in user management module*/
+			$('.dataTableContainer').on('click','.delete-user',function () {
+				if(scope.tableData)
+					scope.tableData.showDeleteUser($(this).attr('attr'));
+			});
+			
+			/* click handle for delete project display in project management module*/
+			$('.dataTableContainer').on('click', '.delete-project', function () {
+				if (scope.tableData)
+					scope.tableData.deleteProject($(this).attr('attr'));
+			});
+
+
+			/* click handle for delete practice display in practice management module*/
+			$('.dataTableContainer').on('click','.delete-practice',function () {
+				if(scope.tableData)
+					scope.tableData.showDeletePractice($(this).attr('attr'));
+			});
+			
+			/* click handle for edit service line display in service line management module*/
+			$('.dataTableContainer').on('click','.edit-loadedCost',function () {
+			
+				if(scope.tableData)
+					scope.tableData.showEditLodedCost($(this).attr('attr'));
+			});
+			
+			/* click handle for attendance list display in training manangement module*/
+			$('.dataTableContainer').on('click','.attendance-list',function () {
+				if(scope.tableData)
+					scope.tableData.showInvitedList($(this).attr('attr'));
+			})
+			/* click handle for edit training  display in training manangement module*/
+			$('.dataTableContainer').on('click','.edit-training',function () {
+				if(scope.tableData)
+					scope.tableData.showEditTraining($(this).attr('attr'));
+			})
+			
+			
+			/* click handle for edit customer display in project management */
+			$('.dataTableContainer').on('click','.edit-customer',function () {
+				if (scope.tableData) {
+					scope.tableData.showEditCustomer($(this).attr('attr'));
+				}
+			})
+			
+			/* click handle for delete confirm model display in project management */
+			$('.dataTableContainer').on('click','.delete-customer',function () {
+				if (scope.tableData) {
+					scope.tableData.showDeleteCustomer($(this).attr('attr'));
+				}
+			})
+			
+			/* click handle for delete training  display in training manangement module*/
+			$('.dataTableContainer').on('click','.delete-training',function () {
+				if(scope.tableData)
+					scope.tableData.showDeleteTraining($(this).attr('attr'));
+			})
+			/* click handle for delete serviceLine display in serviceLine manangement module*/
+			$('.dataTableContainer').on('click','.delete-serviceLine',function () {
+				if(scope.tableData)
+					scope.tableData.showDeleteServiceLine($(this).attr('attr'),$(this).attr('attr1'));
+			});
+			
+			/* click handle for delete serviceLine display in serviceLine manangement module*/
+			$('.dataTableContainer').on('click','.delete-department',function () {
+				if(scope.tableData)
+					scope.tableData.showDeleteDepartment($(this).attr('attr'),$(this).attr('attr1'));
+			});
+			/* click handle for feedback table display in training manangement module*/
+			$('.dataTableContainer').on('click','.feedback-show',function (event) {
+				if(scope.tableData)
+					scope.tableData.showFeedbackTable($(this).attr('attr'),event);
+			})
+			$('.dataTableContainer').on('click','.delete-resource',function () {
+				if(scope.tableData)
+					scope.tableData.showDeleteResource($(this).attr('attr'), $(this).attr('resource-index'));
+			})
+			$('.dataTableContainer').on('click','.edit-resource',function () {
+				if(scope.tableData){
+					scope.tableData.showEditResource($(this).attr('resource'));
+				}
+			})
+			$('.dataTableContainer').on('click','.delete-mappedresource',function () {
+				if(scope.tableData)
+					scope.tableData.showMappedDeleteResource($(this).attr('attr'), $(this).attr('resource-index'));
+			})
+			$('.dataTableContainer').on('click','.edit-mappedresource',function () {
+			console.log("pop");
+				if(scope.tableData){
+					scope.tableData.showMappedEditResource($(this).attr('resource'));
+				}
+			})
+			/* Handle click event of SOW Role table displayed in SOW manangement module*/
+			$('.dataTableContainer').on('click','.edit-sow-role',function () {
+				if(scope.tableData){
+					scope.tableData.editSowRole($(this).attr('attr'), $(this).attr('sow-index'));
+				}
+					
+			});
+			
+			/* Handle click event of SOW Role table displayed in SOW manangement module*/
+			$('.dataTableContainer').on('click','.delete-sow-role',function () {
+				if (scope.tableData) {
+					scope.tableData.deleteSowRole($(this).attr('attr'), $(this).attr('sow-index'));
+				}
+
+			});
+
+			/* click handle for FBP display in project management module*/
+			$('.dataTableContainer').on('click', '.display-fbp', function () {
+				alert("inside this function");
+				if (scope.tableData)
+					scope.tableData.displayfbp($(this).attr('attr'));
+			});
+
+
+
+
+			/*  for training-feedback table accordion which expands and display the feedback table for that particular 
+			 * session when feedback expand icon(+) is clicked and closes the feedback table accordion when 
+			 * collapse icon(-) is clicked.
+			 * this eventually closes other feedbacks which is already opened */
+			if(element[0].id != "feedback-table"){
+
+				$('.dataTableContainer').on('click', 'td.details-control', function () {
+					var tr = $(this).closest('tr');
+					var row = tableObj.row( tr );
+					var rowObj = $(this).closest('.parent-table').siblings();
+
+					/* changing icon when expanding and collapsing */
+					$(".parent.table tbody > tr.parent-table").filter(function(index, elem){
+						$(elem).find('td:last-child span').removeClass("glyphicon-minus")
+					});
+
+					/* closing all accordions when new accordion is opened */       
+					$.each(rowObj,function(key,value){
+						var rowValue = tableObj.row(value);
+						rowValue.child.hide();
+						rowObj.removeClass('shown');
+					})
+
+					/*to close the accordion  ehen collapse icon(-) is clicked*/
+					if ( row.child.isShown() ) {
+						// This row is already open - close it
+						row.child.hide();
+						tr.removeClass('shown');
+					}
+
+					/*opens the accordion when expand icon is clicked(+)*/ 
+					else {
+						// Open this row
+						var rowCount = $(this).closest('.dataTableContainer').find(' .parent tbody .parent-table').index($(this).closest('tr'));
+						if(row.child(format()))
+							row.child(format()).show();
+						var childRow = element.find($(this)).closest('tr').next().find('table');
+						$compile(childRow)(scope);
+						element.find('[my-table]').removeAttr('my-table');
+						tr.addClass('shown');
+						$(".parent.table tr.shown td:last-child span").addClass("glyphicon-minus");
+						scope.$apply();
+					}
+				} );
+			}
+
+			/* inserts the feedback table values for each request of feedback is made. the permission check for update of training
+			 *  module is checked and accordingly choice is provided to edit and save the feedback else only view is enabled.
+			 *  also checks the permission for delete and adds the delete icon */
+			if(element[0].id == "feedback-table"){
+				scope.feedback = scope.$root.feedbackData;
+				scope.feedbackCopy = angular.copy(scope.feedback);
+
+				/* watches for the feedback table data and updates with the new value once it is updated*/
+				scope.$watch('$root.feedbackData',function(newValue,oldValue){
+					scope.feedback = angular.copy(newValue);
+					addRow(scope.feedback);
+				},true)
+				scope.feedbackRequest = [];
+
+				/* checks for the permission to update and adds choice to edit
+				 *  else read only values are added*/
+				var addRow = function(data){
+					if(data){
+
+						/* for parsing the feedback values*/
+						angular.forEach(scope.feedback,function(value,key){
+							(value.feedbackItem1 != null && value.feedbackItem1 != "") ? value.feedbackItem1 = parseInt(value.feedbackItem1) : value.feedbackItem1 = null;
+							(value.feedbackItem2 != null && value.feedbackItem2 != "") ? value.feedbackItem2 = parseInt(value.feedbackItem2) : value.feedbackItem2 = null;
+							(value.feedbackItem3 != null && value.feedbackItem3 != "") ? value.feedbackItem3 = parseInt(value.feedbackItem3) : value.feedbackItem3 = null;
+							(value.feedbackItem4 != null && value.feedbackItem4 != "") ? value.feedbackItem4 = parseInt(value.feedbackItem4) : value.feedbackItem4 = null;
+							(value.feedbackItem5 != null && value.feedbackItem5 != "") ? value.feedbackItem5 = parseInt(value.feedbackItem5) : value.feedbackItem5 = null;
+						})
+						newFeedbackCount = 0;
+
+						/* this empties the feedback table*/
+						scope.$parent.feedbackOptions.aaData = [];
+
+						/*checking for the update permission and delete permission using ng-if in delete-icon*/
+						if(scope.$parent.otherData.UPDATE_TM){
+							angular.forEach(scope.feedback,function(value,key){
+								scope.$parent.feedbackOptions.aaData.push(['<span class="read-only">{{feedback['+newFeedbackCount+'].users.aceno}}</span>',
+								                                           '<span>{{feedback['+newFeedbackCount+'].feedbackItem1}}</span><input type ="number"  min=1 max=5 ng-blur="hideValue()" ng-model = "feedback['+newFeedbackCount+'].feedbackItem1">',
+								                                           '<span>{{feedback['+newFeedbackCount+'].feedbackItem2}}</span><input type ="number" min=1 max=5 ng-blur="hideValue()" ng-model = "feedback['+newFeedbackCount+'].feedbackItem2">',
+								                                           '<span>{{feedback['+newFeedbackCount+'].feedbackItem3}}</span><input type ="number"  min=1 max=5 ng-blur="hideValue()" ng-model = "feedback['+newFeedbackCount+'].feedbackItem3">',
+								                                           '<span>{{feedback['+newFeedbackCount+'].feedbackItem4}}</span><input type ="number"  min=1 max=5 ng-blur="hideValue()" ng-model = "feedback['+newFeedbackCount+'].feedbackItem4">',
+								                                           '<span>{{feedback['+newFeedbackCount+'].feedbackItem5}}</span><input type ="number"  min=1 max=5 ng-blur="hideValue()" ng-model = "feedback['+newFeedbackCount+'].feedbackItem5">',
+								                                           '<span>{{feedback['+newFeedbackCount+'].feedbackItem6}}</span><input type ="text"   ng-blur="hideValue()" ng-model = "feedback['+newFeedbackCount+'].feedbackItem6">'+
+								                                           '<span ng-if="'+scope.$parent.otherData.DELETE_TM+'" class="spoiler deleteRow glyphicon glyphicon-remove" ace-no={{feedback["'+newFeedbackCount+'"].users.aceno}} session={{feedback["'+newFeedbackCount+'"].sessionNo}} attr="'+newFeedbackCount+'"></span>']);
+								newFeedbackCount = newFeedbackCount + 1;
+							})
+						}
+						else{
+							angular.forEach(scope.feedback,function(value,key){
+								scope.$parent.feedbackOptions.aaData.push(['<span class="read-only">{{feedback['+newFeedbackCount+'].users.aceno}}</span>',
+								                                           '<span class="read-only">{{feedback['+newFeedbackCount+'].feedbackItem1}}</span>',
+								                                           '<span class="read-only">{{feedback['+newFeedbackCount+'].feedbackItem2}}</span>',
+								                                           '<span class="read-only">{{feedback['+newFeedbackCount+'].feedbackItem3}}</span>',
+								                                           '<span class="read-only">{{feedback['+newFeedbackCount+'].feedbackItem4}}</span>',
+								                                           '<span class="read-only">{{feedback['+newFeedbackCount+'].feedbackItem5}}</span>',
+								                                           '<span class="read-only">{{feedback['+newFeedbackCount+'].feedbackItem6}}</span>'+
+								                                           '<span ng-if="'+scope.$parent.otherData.DELETE_TM+'" class="spoiler deleteRow glyphicon glyphicon-remove" ace-no={{feedback["'+newFeedbackCount+'"].users.aceno}} session={{feedback["'+newFeedbackCount+'"].sessionNo}} attr="'+newFeedbackCount+'"></span>']);
+								newFeedbackCount = newFeedbackCount + 1;
+							})
+						}
+						
+						/* once feedback table data is populated it should be compiled manually.
+						 * To prevent compiling the whole thing the particular table is identified and compiled*/
+						var childRow = element.find($(this)).closest('table');
+						$compile(childRow)(scope);
+					}
+				}
+				/*method call for initially adding the feedback values whenever expand icon is clicked*/
+				addRow(scope.feedback);
+
+				/*hides the text box which is provided as the choice for editing whenever the focus is lost*/
+				scope.hideValue = function(that){
+					$('.dataTableContainer .table .table td').not(that).find('span').removeClass('hide-value');
+					$('.dataTableContainer .table .table td').not(that).find('input').not('.ng-invalid').hide();
+				}
+				
+				/* deleting the row which is selected getting the aceno which is related to that particular feedback 
+				 * through the attribute which is added to the delete icon.
+				 * the delete method is called which is defined in the trainingController */
+				$('.dataTableContainer').off('click','.deleteRow').on( 'click', '.deleteRow', function () {
+					if($(this).attr('ace-no')){
+						scope.$parent.$parent.deleteFeedback($(this).attr('ace-no'),$(this).attr('session'));
+					}
+				} );
+
+				/*saves the feedback changes.gets the request object of feedback changes and
+				 *  calls the method in TrainingController for saving the feedback */
+				$('.dataTableContainer #feedback-table').on( 'click', '.save', function () {
+					scope.feedbackRequest = [];
+					var users ={}
+					$.each(scope.feedback,function(key,value){
+						if(value){
+							if(value !='na'){
+								scope.feedbackRequest.push(value);
+							}
+						}
+					})
+					// checking for valid inputs and call method of controller 
+					if($('.dataTableContainer #feedback-table .ng-invalid').length == 0){
+						scope.$parent.$parent.saveFeedback(scope.feedbackRequest);
+					}
+				});
+				
+				/* editable input box visible when clicking on td*/
+				$('.dataTableContainer .table .table').on('click','tbody td',function(){
+					scope.hideValue(this);
+					$(this).children('input').show(function(){
+						var input = this;
+						setTimeout(function(){
+							$(input).focus();
+						},1);
+					});
+					$(this).children('span').not('.read-only').not('.spoiler').addClass('hide-value');
+				})
+			}
+
+
+			function handleModelUpdates(newData) {
+				scope.userData = scope.otherData;
+				var data = newData || null;
+				if (data) {
+					dataTable.fnClearTable();
+					dataTable.fnAddData(data);
+				}
+				$compile(element.contents())(scope);
+			}
+			
+			/*format function which renders the template of accordion
+			 * Includes the permission check for update training to display save button
+			 * and its done using ng-if in save button*/
+			function format () {
+				if(scope.tableData)
+					return '<form class="feedbackForm" name ="feedbackForm"><table  feedbackloader="feedbackloader"" id="feedback-table" class="table feedback-table" table-data="tableFunction" other-data="trainingList" cellspacing="0" width="100%" my-table options="feedbackOptions">'
+					+'  <thead >'
+					+' <tr class="feedback-header">'
+					+'<th>ACE No.</th>'
+					+' <th>Purpose of the Training was Met</th>'
+					+' <th>There was a clarity in content and was presented appropriately</th>'
+					+' <th>Presenter communication enhanced the quality of session and response to participant\'s question was clear to the point </th>'
+					+' <th>Session learning was applicable to my job and effectiveness in my workplace </th>'
+					+'<th>Adequate time was provided for all topics</th>'
+					+'<th>Overall Comments</th>'
+					+'</tr>'
+					+'<tr>'
+					+'<th style="text-align:center;"colspan = 7>Rating => 1- Strongly Disagree, 2 - Disagree ,3 - Neutral, 4 - Agree, 5 - Strongly Agree </th>'
+					+'</tr>'
+					+' </thead>'
+					+'<tfoot><tr><th colspan=7><input ng-if="'+scope.otherData.UPDATE_TM+'" type ="submit" value="Save" class="save btn"></th></tr></tfoot>'
+					+' <tbody>'
+					+' </tbody>'
+					+'</table><div class="loader"></div></form>';
+			}
+//			$timeout(function () { $compile(element.contents())(scope); }, 100);
+		},
+		scope: {
+			options: "=",
+			tableData: '=',
+			otherData: '=',
+			feedbackOptions: '='
+		}
+	};
+});

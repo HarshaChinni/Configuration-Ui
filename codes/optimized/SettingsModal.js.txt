@@ -1,0 +1,146 @@
+
+//controllers for manage Configuration functionalities
+
+angular.module('hansumApp.Settings')
+
+
+/*
+ * controller for create configuration
+ */
+
+.controller('createConfigurationController', function ($scope, $rootScope, $modal, ModalService, TransferObject) {
+
+
+    $scope.createConfiguration = function (name, value, edit) {
+          $scope.constant = name;
+         $scope.value = value;
+           $scope.editFlag = edit;
+
+             $scope.endValues = {
+
+                    "configId": $scope.configId,
+
+                    "constant": $scope.constant,
+
+                    "value": $scope.value,
+
+                    "editFlag": $scope.editFlag,
+
+                };
+
+            console.log( $scope.constant);
+            console.log( $scope.value);
+            console.log($scope.editFlag);
+            // TransferObject.update(a, b, c);
+            console.log("inside create config func");
+            
+        };
+
+    $('.modal .modal-content').on('hidden.bs.modal', function() {
+		return false;
+	});
+	
+	/* success function of network call for configuration creation[createConfiguration] 
+	 * which in turn broadcasts to configuration controller which will be watched
+	 * and configuration data is reloaded*/
+	var successCreateConfiguration = function(data) {
+		$scope.dataLoaded = true;
+		$scope.endValues;
+		$scope.creatConfigurationForm.$setPristine(true);
+		// close the modal here
+		close();
+		$('.modal-backdrop').remove();
+		$rootScope.$broadcast('configurationUpdated');
+		growl.success("Session Created Successfully");
+
+	}
+	
+	/* error function for training creation[createTraining]
+	 * which displays a error notification  */
+	var errorCreateConfiguration = function(data, status, headers, config) {
+		$scope.dataLoaded = true;
+		$scope.endValues;
+		$scope.creatConfigurationForm.$setPristine(true);
+		// close the modal here
+		close();
+		$('.modal-backdrop').remove();
+		if (status == 401)
+			$location.path('/login');
+		else
+			growl.error("configuration Creation Failed!!!");
+
+	}
+	
+	/* network call to create training*/
+	var createConfiguration = function(successCreateConfiguration, errorCreateConfiguration, endValues) {
+		ConfigurationDataService.createConfiguration(successCreateConfiguration, errorCreateConfiguration, endValues);
+	}
+
+
+/* triggered when 'Add Training' button is clicked 
+	 * generates request object and initiates network call of create Training*/
+	$scope.createConfiguration = function(configuration){
+		/*set to false for loader icon display till response is obtained*/
+		$scope.dataLoaded = false;
+		var requestObj = angular.copy(configuration);
+
+		createTraining(successCreateTraining, errorCreateTraining, requestObj);
+	}
+
+	$scope.closePopup = function() {
+		$scope.configuration = {};
+		$scope.creatConfigurationForm.$setPristine(true);
+		$('.modal-backdrop').remove();
+	}
+
+
+
+    })
+
+
+/*
+ * controller for edit configuration
+ */
+     .controller('editConfigurationController', function ($http, appURL, $scope, growl, $rootScope, TransferObject) {
+        console.log("ajkad");
+
+        $scope.editFn = function () {
+
+            console.log("Inside the edit controller!!!!");
+
+            $rootScope.test();
+        };
+
+        $scope.createConfiguration = function (name, value, edit) {
+    
+            var a = name;
+            var b = value;
+            var c = edit;  
+
+            TransferObject.update(a, b, c);
+
+            console.log("inside create config func");
+        };
+
+    })
+
+/*
+ * controller for deleting configuration
+ */
+       .controller('deleteConfigurationController', function ($http, appURL, $scope, growl, $rootScope) {
+
+        $scope.deleteFn = function () {
+
+            // http://172.24.125.67:8086/dp-rest/resources/configuration/constant/?constant={constant}
+            $http.delete(appURL + '/resources/configuration/constant/?constant=' + $rootScope.deleteConfigVariable, {
+            }).then(function (response) {
+
+                //alert("deleted");
+                growl.success("The Selected item is deleted successfully" + $rootScope.deleteConfigVariable);
+            },
+                function () {
+                    growl.error("The deletion of the item is failed")
+
+                });
+        }
+    })

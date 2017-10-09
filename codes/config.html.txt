@@ -1,0 +1,64 @@
+<style>
+    .scrollit {
+        overflow: scroll;
+        height: 450px;
+    }
+
+    .form-control {
+        width: 90%
+    }
+
+    #buttonCreate {
+
+        width: 86px;
+        height: 33px;
+        position: relative;
+        top: 11px;
+        margin-right:32px;
+    }
+
+     #elementHeader {
+
+        width: 86px;
+        height: 33px;
+        position: relative;
+        top: 14px;
+         margin-left:1px;
+    }
+
+    /*#tableElement {
+         width: 300px;
+        /*position: relative;*/
+        /*top: 15px;*/
+    /*}*/*/
+</style>
+
+<div class="maincontainer" ng-controller="ConfiguratonController">
+
+    <div class="clearfix">
+        <h2 id="elementHeader" class="pull-left">Configuration</h2>
+        <button id="buttonCreate" ng-if="permissions.CREATE_TM" class="btn btn-primary createuser" role="button" ng-click="showCreateConfiguration()"
+            data-toggle="modal" onclick="$('#create').modal({'backdrop': 'static'});">
+			<span class="glyphicon glyphicon-cog"></span> Create
+		</button>
+        <span growl></span>
+    </div>
+    <br>
+
+    <!--<div class="container-loader" ng-hide="dataLoaded"></div>-->
+    <div class="tablecontainer tableList" ng-hide="!dataLoaded">
+        <table class="table table-striped table-bordered" table-data="tableFunctions" cellspacing="0" width="100%" my-table options="options">
+            <thead>
+                <tr>
+                    <th>Configuration Name</th>
+                    <th>Value</th>
+                    <th>Actions</th>
+                    <!--<th class="sorting_disabled"><label ng-show="$parent.permissions.UPDATE_TM || $parent.permissions.DELETE_TM">Actions</label></th>-->
+
+                </tr>
+            </thead>
+        </table>
+    </div>
+
+
+</div>
